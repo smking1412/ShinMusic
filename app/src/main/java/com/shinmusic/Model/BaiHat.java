@@ -1,6 +1,5 @@
 package com.shinmusic.Model;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -29,7 +28,7 @@ public class BaiHat implements Parcelable {
     private String luotThich;
     @SerializedName("LoiBaiHat")
     @Expose
-    private Object loiBaiHat;
+    private String loiBaiHat;
 
     protected BaiHat(Parcel in) {
         idBaiHat = in.readString();
@@ -38,6 +37,7 @@ public class BaiHat implements Parcelable {
         caSy = in.readString();
         duongDan = in.readString();
         luotThich = in.readString();
+        loiBaiHat = in.readString();
     }
 
     public static final Creator<BaiHat> CREATOR = new Creator<BaiHat>() {
@@ -100,11 +100,11 @@ public class BaiHat implements Parcelable {
         this.luotThich = luotThich;
     }
 
-    public Object getLoiBaiHat() {
+    public String getLoiBaiHat() {
         return loiBaiHat;
     }
 
-    public void setLoiBaiHat(Object loiBaiHat) {
+    public void setLoiBaiHat(String loiBaiHat) {
         this.loiBaiHat = loiBaiHat;
     }
 
@@ -121,5 +121,6 @@ public class BaiHat implements Parcelable {
         parcel.writeString(caSy);
         parcel.writeString(duongDan);
         parcel.writeString(luotThich);
+        parcel.writeString(loiBaiHat);
     }
 }
