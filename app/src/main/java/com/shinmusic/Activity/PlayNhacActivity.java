@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.shinmusic.Adapter.PlaynhacAdapter;
 import com.shinmusic.Adapter.ViewPagerPlaylistNhacAdapter;
 import com.shinmusic.Fragment.Fragment_Dianhac;
 import com.shinmusic.Fragment.Fragment_Loi_Bai_Hat;
@@ -155,6 +154,7 @@ public class PlayNhacActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mediaPlayer.seekTo(seekBar.getProgress());
+                fragment_loi_bai_hat.UpdateTime(seekBar.getProgress());
 //                lrcView.updateTime(seekBar.getProgress());
             }
         });
@@ -282,6 +282,7 @@ public class PlayNhacActivity extends AppCompatActivity {
             if (mediaPlayer.isPlaying()) {
                 long time = mediaPlayer.getCurrentPosition();
                 seektime.setProgress((int) time);
+//                fragment_loi_bai_hat.UpdateTime(time);
             }
 
             xhandler.postDelayed(this, 300);
@@ -384,6 +385,7 @@ public class PlayNhacActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
         txttotaltimesong.setText(simpleDateFormat.format(mediaPlayer.getDuration()));
         seektime.setMax(mediaPlayer.getDuration());
+        seektime.setProgress(0);
     }
 
     private void UpdateTime() {
@@ -394,6 +396,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                 if (mediaPlayer != null) {
                     seektime.setProgress(mediaPlayer.getCurrentPosition());
 //                    lrcView.updateTime(mediaPlayer.getCurrentPosition());
+//                    fragment_loi_bai_hat.UpdateTime(mediaPlayer.getCurrentPosition());
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
                     txttimesong.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
                     handler.postDelayed(this, 300);
