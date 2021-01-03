@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.shinmusic.Adapter.PlaynhacAdapter;
 import com.shinmusic.Adapter.ViewPagerPlaylistNhacAdapter;
 import com.shinmusic.Fragment.Fragment_Dianhac;
 import com.shinmusic.Fragment.Fragment_Loi_Bai_Hat;
@@ -345,6 +346,7 @@ public class PlayNhacActivity extends AppCompatActivity {
             imgplay.setImageResource(R.drawable.iconpause);
         }
     }
+
 
     class PlayMp3 extends AsyncTask<String, Void, String> {
 
