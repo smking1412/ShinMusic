@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.shinmusic.Activity.PlayNhacActivity;
 import com.shinmusic.R;
 
 import me.wcy.lrcview.LrcView;
@@ -26,6 +27,12 @@ public class Fragment_Loi_Bai_Hat extends Fragment {
         if (lyric != null) {
             lrcView.loadLrcByUrl(lyric);
         }
+        lrcView.setDraggable(true, new LrcView.OnPlayClickListener() {
+            @Override
+            public boolean onPlayClick(LrcView view, long time) {
+                return false;
+            }
+        });
         return view;
     }
 
@@ -37,6 +44,12 @@ public class Fragment_Loi_Bai_Hat extends Fragment {
             lyric = null;
             lrcView.loadLrc(lyric);
             lrcView.setLabel("Không thể tìm thấy lời bài hát (@ _ @)");
+        }
+    }
+
+    public void GetFirstLyric(String loibaihat) {
+        if (loibaihat != null) {
+            lyric = loibaihat;
         }
     }
 }

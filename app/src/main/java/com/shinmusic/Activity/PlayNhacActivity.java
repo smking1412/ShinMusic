@@ -77,7 +77,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                         }
 
                         if (mangbaihat.get(0).getLoiBaiHat() != null) {
-                            fragment_loi_bai_hat.GetLyric(mangbaihat.get(0).getLoiBaiHat());
+                            fragment_loi_bai_hat.GetFirstLyric(mangbaihat.get(0).getLoiBaiHat());
                         }
                         handler.removeCallbacks(this);
                     } else {
@@ -86,6 +86,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                 }
             }
         }, 500);
+
         imgplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
