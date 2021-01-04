@@ -18,7 +18,7 @@ import me.wcy.lrcview.LrcView;
 public class Fragment_Loi_Bai_Hat extends Fragment {
     private LrcView lrcView;
     private String lyric;
-    private long timeSong;
+    private long timeSong = 0;
 
     @Nullable
     @Override
@@ -42,14 +42,18 @@ public class Fragment_Loi_Bai_Hat extends Fragment {
     }
 
     public void UpdateTime(long time){
-        time = timeSong;
+        timeSong = time;
         lrcView.updateTime(time);
         }
 
     public void GetLyric(String loibaihat) {
         if (loibaihat != null) {
-            lyric = loibaihat;
-            lrcView.loadLrcByUrl(lyric);
+            if (PlayNhacActivity.mangbaihat.size()==1){
+                lyric = loibaihat;
+            } else {
+                lyric = loibaihat;
+                lrcView.loadLrcByUrl(lyric);
+            }
         } else {
             lyric = null;
             lrcView.loadLrc(lyric);

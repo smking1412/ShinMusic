@@ -57,35 +57,9 @@ public class PlayNhacActivity extends AppCompatActivity {
         GetDataFromIntent();
         init();
         eventClick();
-
     }
 
     private void eventClick() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (viewPagerPlaylistNhacAdapter.getItem(0) != null) {
-                    if (mangbaihat.size() > 0) {
-                        if (mangbaihat.get(0).getImageBaiHat() != null) {
-                            fragment_dianhac.Playnhac(mangbaihat.get(0).getImageBaiHat());
-                        } else if (mangbaihat.get(0).getImageBaiHat() == null) {
-                            CircleImageView circleImageView;
-                            circleImageView = findViewById(R.id.circleimagedianhac);
-                            circleImageView.setBackgroundResource(R.drawable.demo_music);
-                        }
-
-                        if (mangbaihat.get(0).getLoiBaiHat() != null) {
-                            fragment_loi_bai_hat.GetFirstLyric(mangbaihat.get(0).getLoiBaiHat());
-                        }
-                        handler.removeCallbacks(this);
-                    } else {
-                        handler.postDelayed(this, 300);
-                    }
-                }
-            }
-        }, 500);
-
         imgplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +71,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                     }
                 } else {
                     mediaPlayer.start();
+                    xhandler.post(runnable);
                     imgplay.setImageResource(R.drawable.iconpause);
                     if (fragment_dianhac.objectAnimator != null) {
                         fragment_dianhac.objectAnimator.resume();
@@ -282,7 +257,7 @@ public class PlayNhacActivity extends AppCompatActivity {
             if (mediaPlayer.isPlaying()) {
                 long time = mediaPlayer.getCurrentPosition();
                 seektime.setProgress((int) time);
-//                fragment_loi_bai_hat.UpdateTime(time);
+                fragment_loi_bai_hat.UpdateTime(time);
             }
 
             xhandler.postDelayed(this, 300);
@@ -347,6 +322,30 @@ public class PlayNhacActivity extends AppCompatActivity {
             new PlayMp3().execute(mangbaihat.get(0).getDuongDan());
             imgplay.setImageResource(R.drawable.iconpause);
         }
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (viewPagerPlaylistNhacAdapter.getItem(0) != null) {
+                    if (mangbaihat.size() > 0) {
+                        if (mangbaihat.get(0).getLoiBaiHat() != null) {
+                            fragment_loi_bai_hat.GetFirstLyric(mangbaihat.get(0).getLoiBaiHat());
+                        }
+                        if (mangbaihat.get(0).getImageBaiHat() != null) {
+                            fragment_dianhac.Playnhac(mangbaihat.get(0).getImageBaiHat());
+                        } else if (mangbaihat.get(0).getImageBaiHat() == null) {
+                            CircleImageView circleImageView;
+                            circleImageView = findViewById(R.id.circleimagedianhac);
+                            circleImageView.setBackgroundResource(R.drawable.demo_music);
+                        }
+                        handler.removeCallbacks(this);
+                    } else {
+                        handler.postDelayed(this, 300);
+                    }
+                }
+            }
+        }, 500);
     }
 
 
