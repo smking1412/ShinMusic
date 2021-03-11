@@ -20,12 +20,34 @@ public class LoginActivity extends AppCompatActivity {
     private BiometricPrompt biometricPrompt;
     private Executor executor;
     private BiometricPrompt.PromptInfo promptInfo;
+    private boolean isLogin = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         btnLoginFinger = findViewById(R.id.btnLoginFinger);
 
+        initFinger();
+        if (isLogin == false){
+            btnLoginFinger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(LoginActivity.this, "Bạn phải dăng nhập trước", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            btnLoginFinger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    biometricPrompt.authenticate(promptInfo);
+                }
+            });
+
+        }
+
+    }
+
+    private void initFinger() {
         executor = ContextCompat.getMainExecutor(this);
         biometricPrompt = new BiometricPrompt(LoginActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
@@ -52,13 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Xác thực dấu vân tay")
                 .setSubtitle("Đặt ngón tay tại chỗ xác thực")
-                .setNegativeButtonText("Sử dụng password")
+                .setNegativeButtonText("Hủy")
                 .build();
-        btnLoginFinger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                biometricPrompt.authenticate(promptInfo);
-            }
-        });
     }
 }
