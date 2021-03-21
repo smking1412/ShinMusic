@@ -18,8 +18,8 @@ public class Fragment_Trang_Chu extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_trang_chu,container,false);
-        return  view;
 
+        return  view;
     }
 
 }

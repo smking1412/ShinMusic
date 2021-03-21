@@ -52,7 +52,6 @@ public class Fragment_Album extends Fragment {
                 startActivity(intent);
             }
         });
-
         GetData();
         return  view;
     }

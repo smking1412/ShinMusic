@@ -203,7 +203,6 @@ public class DanhsachbaihatActivity extends AppCompatActivity {
                 Intent intent = new Intent(DanhsachbaihatActivity.this,PlayNhacActivity.class);
                 intent.putParcelableArrayListExtra("cacbaihat",mangbaihat);
                 startActivity(intent);
-
             }
         });
     }

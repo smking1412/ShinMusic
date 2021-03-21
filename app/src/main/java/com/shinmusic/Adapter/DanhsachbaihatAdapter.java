@@ -43,6 +43,14 @@ public class DanhsachbaihatAdapter extends  RecyclerView.Adapter<DanhsachbaihatA
         holder.txtindex.setText(position + 1 + "");
         holder.txttenbaihat.setText(baiHat.getTenBaiHat());
         holder.txtcasy.setText(baiHat.getCaSy());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, PlayNhacActivity.class);
+                intent.putExtra("baihat",mangbaihat.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -61,14 +69,7 @@ public class DanhsachbaihatAdapter extends  RecyclerView.Adapter<DanhsachbaihatA
             txtcasy = itemView.findViewById(R.id.textviewtencasy);
             imgluotthich = itemView.findViewById(R.id.imageviewthichdsbaihat);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, PlayNhacActivity.class);
-                    intent.putExtra("baihat",mangbaihat.get(getPosition()));
-                    context.startActivity(intent);
-                }
-            });
+
         }
 
     }

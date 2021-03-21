@@ -3,6 +3,10 @@ package com.shinmusic.Fragment;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +28,7 @@ public class Fragment_Dianhac extends Fragment {
     View view;
     CircleImageView circleImageView;
     public  ObjectAnimator objectAnimator;
-    Context context;
+    Context context = getActivity();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,7 +46,30 @@ public class Fragment_Dianhac extends Fragment {
 
     public void Playnhac(String hinhanh) {
         if (hinhanh != null){
-        Picasso.with(context).load(hinhanh).into(circleImageView);
+        Picasso.with(context)
+                .load(hinhanh)
+                .into(circleImageView);
+        }
+    }
+
+    public void getSongBitmap(String uri) {
+        Bitmap imageSong = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(uri);
+        byte[] art = retriever.getEmbeddedPicture();
+        if (art != null) {
+            imageSong = BitmapFactory.decodeByteArray(art, 0, art.length);
+            retriever.release();
+            Glide.with(getActivity())
+                    .asBitmap()
+                    .load(imageSong)
+                    .into(circleImageView);
+        }
+        else {
+            Glide.with(getActivity())
+                    .asBitmap()
+                    .load(this.getResources().getIdentifier("icon_app", "drawable", getActivity().getPackageName()))
+                    .into(circleImageView);
         }
     }
 

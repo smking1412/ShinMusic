@@ -26,17 +26,16 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
         return arrTitle.size();
     }
 
-    //method add fragment va tittle
-    public  void addFragment(Fragment fragment, String title){
-        arrFragment.add(fragment);
-        arrTitle.add(title);
-    }
-
     //method getPageTitle
-
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         return arrTitle.get(position);
+    }
+
+    //method add fragment va tittle
+    public  void addFragment(Fragment fragment, String title){
+        arrFragment.add(fragment);
+        arrTitle.add(title);
     }
 }
