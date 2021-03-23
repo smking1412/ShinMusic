@@ -55,7 +55,7 @@ public class AllAlbumAdapter extends RecyclerView.Adapter<AllAlbumAdapter.ViewHo
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgalbum = itemView.findViewById(R.id.imageviewallalbum);
-            txttenalbum = itemView.findViewById(R.id.textviewtenalbum);
+            txttenalbum = itemView.findViewById(R.id.tv_album_name);
             txttencasyalbum = itemView.findViewById(R.id.textviewcasyalbum);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -88,7 +88,7 @@
                     android:layout_marginRight="15dp"
                     android:background="@null"
                     android:scaleType="fitXY"
-                    android:src="@drawable/iconsuffle">
+                    android:src="@drawable/iconshuffle">
                 </ImageButton>
 
                 <ImageButton

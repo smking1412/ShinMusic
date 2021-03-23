@@ -17,7 +17,7 @@ import me.wcy.lrcview.LrcView;
 
 public class Fragment_Loi_Bai_Hat extends Fragment {
     private LrcView lrcView;
-    private String lyric;
+    private String lyric ;
     private long timeSong = 0;
 
     @Nullable
@@ -35,9 +35,6 @@ public class Fragment_Loi_Bai_Hat extends Fragment {
                 return true;
             }
         });
-
-
-
         return view;
     }
 

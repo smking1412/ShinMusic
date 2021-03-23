@@ -52,9 +52,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Viewholder>{
         TextView txttenalbum,txtcasyalbum;
         public Viewholder(View itemView) {
             super(itemView);
-            imghinhalbum = itemView.findViewById(R.id.imageviewalbum);
-            txttenalbum = itemView.findViewById(R.id.textviewtenalbum);
-            txtcasyalbum = itemView.findViewById(R.id.textviewtencasyalbum);
+            imghinhalbum = itemView.findViewById(R.id.img_album);
+            txttenalbum = itemView.findViewById(R.id.tv_album_name);
+            txtcasyalbum = itemView.findViewById(R.id.tv_singer_album_name);
 
             imghinhalbum.setOnClickListener(new View.OnClickListener() {
                 @Override

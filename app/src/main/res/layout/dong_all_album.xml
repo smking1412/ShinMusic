@@ -24,7 +24,7 @@
             </ImageView>
         </FrameLayout>
         <TextView
-            android:id="@+id/textviewtenalbum"
+            android:id="@+id/tv_album_name"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:paddingLeft="5dp"

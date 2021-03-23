@@ -7,11 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,7 +32,7 @@ public class Fragment_Ca_Nhan extends Fragment {
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private ViewPagerLocalAdapter viewPagerAdapter;
-    public static ArrayList<LocalSongs> localSongsList;
+    public static ArrayList<LocalSongs> localSongsList = new ArrayList<>();
     private Context context;
 
     @Nullable
@@ -90,7 +88,7 @@ public class Fragment_Ca_Nhan extends Fragment {
                     if (Integer.parseInt(duration) > 50000) {
                         LocalSongs localSong = new LocalSongs(path, title, artist, album, duration,null);
                         localSongsArrayList.add(localSong);
-                        Log.d("PMT", "getAllLocalSong: " + localSong.getTittle());
+//                        Log.d("PMT", "getAllLocalSong: " + localSong.getTittle());
                     }
                 }
             }

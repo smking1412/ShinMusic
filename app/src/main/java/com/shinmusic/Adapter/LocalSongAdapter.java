@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,33 +15,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.shinmusic.Activity.PlayLocal2Activity;
 import com.shinmusic.Activity.PlayLocalActivity;
-import com.shinmusic.Activity.PlayNhacActivity;
 import com.shinmusic.Model.LocalSongs;
 import com.shinmusic.R;
 
 import java.util.ArrayList;
 
+import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
+
 public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.ViewHolder> {
     private Context context;
-    private ArrayList<LocalSongs> listSongLocal;
+    private ArrayList<LocalSongs> listLocalSongs = new ArrayList<>();
 
-    public LocalSongAdapter(Context context, ArrayList<LocalSongs> listSongLocal) {
+    public LocalSongAdapter(Context context, ArrayList<LocalSongs> listLocalSongs) {
         this.context = context;
-        this.listSongLocal = listSongLocal;
+        this.listLocalSongs = listLocalSongs;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_song, parent, false);
+        listLocalSongs = localSongsList;
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LocalSongs localSong = listSongLocal.get(position);
+        LocalSongs localSong = listLocalSongs.get(position);
         holder.songName.setText(localSong.getTittle());
         holder.singerName.setText(localSong.getArtist());
         Bitmap image = getSongBitmap(localSong.getPath());
@@ -59,9 +59,9 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Intent intent = new Intent(context, PlayLocalActivity.class);
                 Intent intent = new Intent(context, PlayLocalActivity.class);
-//                Intent intent = new Intent(context, PlayLocal2Activity.class);
-                intent.putExtra("localsong", localSong);
+                intent.putExtra("localsong", position);
                 context.startActivity(intent);
             }
         });
@@ -69,7 +69,7 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
 
     @Override
     public int getItemCount() {
-        return listSongLocal.size();
+        return listLocalSongs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

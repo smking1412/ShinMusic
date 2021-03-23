@@ -6,11 +6,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
-public class ViewPagerPlaylistNhacAdapter extends FragmentPagerAdapter {
+public class ViewPagerPlayListSongsAdapter extends FragmentPagerAdapter {
     public final ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
 
 
-    public ViewPagerPlaylistNhacAdapter(FragmentManager fm) {
+    public ViewPagerPlayListSongsAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -24,7 +24,7 @@ public class ViewPagerPlaylistNhacAdapter extends FragmentPagerAdapter {
         return fragmentArrayList.size();
     }
 
-    public  void AddFragment(Fragment fragment){
+    public  void addFragment(Fragment fragment){
         fragmentArrayList.add(fragment);
     }
 }

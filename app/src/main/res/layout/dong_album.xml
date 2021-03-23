@@ -14,14 +14,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
-            android:id="@+id/imageviewalbum"
+            android:id="@+id/img_album"
             android:layout_gravity="center"
             android:scaleType="fitXY"
+            android:src="@drawable/icon_app"
             android:layout_width="200dp"
             android:layout_height="200dp">
         </ImageView>
         <TextView
-            android:id="@+id/textviewtenalbum"
+            android:id="@+id/tv_album_name"
             android:text="Album hot"
             android:textSize="20sp"
             android:textColor="#000"
@@ -34,7 +35,7 @@
             android:layout_height="wrap_content">
         </TextView>
         <TextView
-            android:id="@+id/textviewtencasyalbum"
+            android:id="@+id/tv_singer_album_name"
             android:text="Ca sỹ album"
             android:textColor="#9e9797"
             android:textSize="20sp"

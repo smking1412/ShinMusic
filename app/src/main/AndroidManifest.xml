@@ -17,7 +17,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.PlayLocal2Activity"></activity>
         <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.PlayNhacActivity" />
         <activity android:name=".Activity.PlayLocalActivity" />

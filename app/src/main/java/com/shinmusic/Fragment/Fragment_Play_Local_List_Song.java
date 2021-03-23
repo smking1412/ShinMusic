@@ -12,25 +12,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shinmusic.Activity.PlayNhacActivity;
+import com.shinmusic.Adapter.PlayLocalAdapter;
 import com.shinmusic.Adapter.PlaynhacAdapter;
 import com.shinmusic.R;
 
-public class Fragment_Play_Danhsach_Baihat extends Fragment {
+public class Fragment_Play_Local_List_Song extends Fragment {
     View view;
     RecyclerView recyclerViewplaynhac;
-    PlaynhacAdapter playnhacAdapter;
+    PlayLocalAdapter playLocalAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_play_dscacbaihat,container,false);
+        view = inflater.inflate(R.layout.fragment_play_dscacbaihat, container, false);
         recyclerViewplaynhac = view.findViewById(R.id.recyclerviewplaybaihat);
-        if (PlayNhacActivity.mangbaihat.size() > 0){
-            playnhacAdapter = new PlaynhacAdapter(getActivity(), PlayNhacActivity.mangbaihat);
-            recyclerViewplaynhac.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerViewplaynhac.setAdapter(playnhacAdapter);
-        }
 
-        return  view;
+        if (Fragment_Ca_Nhan.localSongsList.size() > 0){
+            playLocalAdapter = new PlayLocalAdapter(getActivity(), Fragment_Ca_Nhan.localSongsList);
+            recyclerViewplaynhac.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerViewplaynhac.setAdapter(playLocalAdapter);
+        }
+        return view;
     }
 }

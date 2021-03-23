@@ -1,13 +1,11 @@
 package com.shinmusic.Fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.shinmusic.Activity.PlayLocalActivity;
-import com.shinmusic.Activity.PlayNhacActivity;
 import com.shinmusic.Adapter.LocalSongAdapter;
+import com.shinmusic.Model.LocalSongs;
 import com.shinmusic.R;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
 
@@ -27,6 +28,8 @@ public class Fragment_Song_Local extends Fragment {
     private Button btnPlayAll;
     private RecyclerView recyclerView;
     private LocalSongAdapter localSongAdapter;
+    private int position = 0;
+    private ArrayList<LocalSongs> listLocalSongs = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,8 +45,10 @@ public class Fragment_Song_Local extends Fragment {
         btnPlayAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Random random = new Random();
+                position = random.nextInt(localSongsList.size());
                 Intent intent = new Intent(getContext(), PlayLocalActivity.class);
-                intent.putExtra("listlocalsongs",localSongsList);
+                intent.putExtra("localsongrandom",position);
                 startActivity(intent);
             }
         });
@@ -53,8 +58,9 @@ public class Fragment_Song_Local extends Fragment {
         btnPlayAll = view.findViewById(R.id.btn_play_local_song);
         recyclerView = view.findViewById(R.id.recycler_song_local);
         recyclerView.setHasFixedSize(true);
-        if (!(localSongsList.size() < 1)){
-            localSongAdapter = new LocalSongAdapter(getActivity(), localSongsList);
+        listLocalSongs = localSongsList;
+        if (!(listLocalSongs.size() < 1)){
+            localSongAdapter = new LocalSongAdapter(getActivity(),listLocalSongs);
             recyclerView.setAdapter(localSongAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         }

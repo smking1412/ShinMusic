@@ -17,12 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.shinmusic.Adapter.ViewPagerPlaylistNhacAdapter;
+import com.shinmusic.Adapter.ViewPagerPlayListSongsAdapter;
 import com.shinmusic.Fragment.Fragment_Dianhac;
 import com.shinmusic.Fragment.Fragment_Loi_Bai_Hat;
-import com.shinmusic.Fragment.Fragment_Play_Danhsach_Baihat;
+import com.shinmusic.Fragment.Fragment_Play_List_Baihat;
 import com.shinmusic.Model.BaiHat;
-import com.shinmusic.Model.LocalSongs;
 import com.shinmusic.R;
 
 import java.io.IOException;
@@ -39,9 +38,9 @@ public class PlayNhacActivity extends AppCompatActivity {
     ImageButton imgrandom, imgpre, imgplay, imgnext, imgrepeat;
     ViewPager viewPagerplaynhac;
     public static ArrayList<BaiHat> mangbaihat = new ArrayList<>();
-    public static ViewPagerPlaylistNhacAdapter viewPagerPlaylistNhacAdapter;
+    public static ViewPagerPlayListSongsAdapter viewPagerPlayListSongsAdapter;
     Fragment_Dianhac fragment_dianhac;
-    Fragment_Play_Danhsach_Baihat fragment_play_danhsach_baihat;
+    Fragment_Play_List_Baihat fragment_play_list_baihat;
     Fragment_Loi_Bai_Hat fragment_loi_bai_hat;
     MediaPlayer mediaPlayer;
     int position = 0;
@@ -86,10 +85,10 @@ public class PlayNhacActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (repeat == false) {
                     if (checkrandom == true) {
-                        imgrepeat.setImageResource(R.drawable.iconsyned);
-                        imgrandom.setImageResource(R.drawable.iconsuffle);
+                        imgrepeat.setImageResource(R.drawable.iconrepeated);
+                        imgrandom.setImageResource(R.drawable.iconshuffle);
                     }
-                    imgrepeat.setImageResource(R.drawable.iconsyned);
+                    imgrepeat.setImageResource(R.drawable.iconrepeated);
                     repeat = true;
                 } else {
                     imgrepeat.setImageResource(R.drawable.iconrepeat);
@@ -110,7 +109,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                     imgrandom.setImageResource(R.drawable.iconshuffled);
                     checkrandom = true;
                 } else {
-                    imgrandom.setImageResource(R.drawable.iconsuffle);
+                    imgrandom.setImageResource(R.drawable.iconshuffle);
                     checkrandom = false;
                 }
             }
@@ -240,8 +239,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                 seektime.setProgress((int) time);
                 fragment_loi_bai_hat.UpdateTime(time);
             }
-
-            xhandler.postDelayed(this, 300);
+            xhandler.postDelayed(this, 50);
         }
     };
 
@@ -289,14 +287,14 @@ public class PlayNhacActivity extends AppCompatActivity {
         toolbarplaynhac.setTitleTextColor(Color.WHITE);
 
         fragment_dianhac = new Fragment_Dianhac();
-        fragment_play_danhsach_baihat = new Fragment_Play_Danhsach_Baihat();
+        fragment_play_list_baihat = new Fragment_Play_List_Baihat();
         fragment_loi_bai_hat = new Fragment_Loi_Bai_Hat();
-        viewPagerPlaylistNhacAdapter = new ViewPagerPlaylistNhacAdapter(getSupportFragmentManager());
-        viewPagerPlaylistNhacAdapter.AddFragment(fragment_play_danhsach_baihat);
-        viewPagerPlaylistNhacAdapter.AddFragment(fragment_dianhac);
-        viewPagerPlaylistNhacAdapter.AddFragment(fragment_loi_bai_hat);
-        viewPagerplaynhac.setAdapter(viewPagerPlaylistNhacAdapter);
-        fragment_dianhac = (Fragment_Dianhac) viewPagerPlaylistNhacAdapter.getItem(1);
+        viewPagerPlayListSongsAdapter = new ViewPagerPlayListSongsAdapter(getSupportFragmentManager());
+        viewPagerPlayListSongsAdapter.addFragment(fragment_play_list_baihat);
+        viewPagerPlayListSongsAdapter.addFragment(fragment_dianhac);
+        viewPagerPlayListSongsAdapter.addFragment(fragment_loi_bai_hat);
+        viewPagerplaynhac.setAdapter(viewPagerPlayListSongsAdapter);
+        fragment_dianhac = (Fragment_Dianhac) viewPagerPlayListSongsAdapter.getItem(1);
         if (mangbaihat.size() > 0) {
             getSupportActionBar().setTitle(mangbaihat.get(0).getTenBaiHat());
             new PlayMp3().execute(mangbaihat.get(0).getDuongDan());
@@ -307,7 +305,7 @@ public class PlayNhacActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (viewPagerPlaylistNhacAdapter.getItem(0) != null) {
+                if (viewPagerPlayListSongsAdapter.getItem(0) != null) {
                     if (mangbaihat.size() > 0) {
                         if (mangbaihat.get(0).getLoiBaiHat() != null) {
                             fragment_loi_bai_hat.GetFirstLyric(mangbaihat.get(0).getLoiBaiHat());
@@ -325,7 +323,7 @@ public class PlayNhacActivity extends AppCompatActivity {
                     }
                 }
             }
-        }, 500);
+        }, 50);
     }
 
 
