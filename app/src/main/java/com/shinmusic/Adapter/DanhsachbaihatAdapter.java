@@ -68,8 +68,6 @@ public class DanhsachbaihatAdapter extends  RecyclerView.Adapter<DanhsachbaihatA
             txttenbaihat = itemView.findViewById(R.id.textviewtenbaihat);
             txtcasy = itemView.findViewById(R.id.textviewtencasy);
             imgluotthich = itemView.findViewById(R.id.imageviewthichdsbaihat);
-
-
         }
 
     }

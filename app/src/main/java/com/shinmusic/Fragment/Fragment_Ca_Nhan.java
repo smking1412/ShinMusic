@@ -49,8 +49,8 @@ public class Fragment_Ca_Nhan extends Fragment {
         viewPager = view.findViewById(R.id.viewpager_local);
         tabLayout = view.findViewById(R.id.tablayout_local);
         viewPagerAdapter = new ViewPagerLocalAdapter(getActivity().getSupportFragmentManager());
-        viewPagerAdapter.addFragments(new Fragment_Song_Local(), "Bài hát");
-        viewPagerAdapter.addFragments(new Fragment_Album_Local(), "Album");
+        viewPagerAdapter.addFragments(new Fragment_Local_Song(), "Bài hát");
+        viewPagerAdapter.addFragments(new Fragment_Local_Album(), "Album");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }

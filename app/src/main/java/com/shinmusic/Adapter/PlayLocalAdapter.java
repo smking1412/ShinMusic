@@ -20,7 +20,7 @@ import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
 public class PlayLocalAdapter extends RecyclerView.Adapter<PlayLocalAdapter.ViewHolder> {
     Context context;
     private ArrayList<LocalSongs> listLocalSongs = new ArrayList<>();
-    private PlaySongListener playSongListener;
+//    private PlaySongListener playSongListener;
 
     public PlayLocalAdapter(Context context, ArrayList<LocalSongs> listLocalSongs) {
         this.context = context;

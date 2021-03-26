@@ -3,16 +3,20 @@ package com.shinmusic.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shinmusic.Adapter.ViewPagerPlayListSongsAdapter;
 import com.shinmusic.Fragment.Fragment_Dianhac;
@@ -20,6 +24,8 @@ import com.shinmusic.Fragment.Fragment_Loi_Bai_Hat;
 import com.shinmusic.Fragment.Fragment_Play_Local_List_Song;
 import com.shinmusic.Model.LocalSongs;
 import com.shinmusic.R;
+import com.shinmusic.Service.MusicPlayingService;
+import com.shinmusic.Utils.PlaySongListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,7 +36,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
 
-public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
+public class PlayLocalActivity extends AppCompatActivity
+        implements MediaPlayer.OnCompletionListener, PlaySongListener, ServiceConnection {
     private ImageView btnReturn;
     private TextView songName;
     private TextView singerName;
@@ -48,11 +55,12 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
     private Fragment_Dianhac fragment_dianhac;
     private Fragment_Play_Local_List_Song fragment_play_local_list_song;
     private Fragment_Loi_Bai_Hat fragment_loi_bai_hat;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
-    private ArrayList<LocalSongs> listLocalSongs = localSongsList;
+    private MediaPlayer mediaPlayer;
+    public static ArrayList<LocalSongs> localSongsArrayList = new ArrayList<>();
     private ViewPagerPlayListSongsAdapter viewPagerPlayListSongsAdapter;
     private Uri uri;
     private Handler handler = new Handler();
+    private MusicPlayingService musicPlayingService;
 
     private int position = 0;
     private boolean isRepeat = false;
@@ -72,10 +80,18 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
 
     @Override
     protected void onResume() {
+        Intent intent = new Intent(this, MusicPlayingService.class);
+        bindService(intent, this, BIND_AUTO_CREATE);
         playThreadBtn();
         prevThreadBtn();
         nextThreadBtn();
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(this);
     }
 
     private void playThreadBtn() {
@@ -94,7 +110,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
         playThread.start();
     }
 
-    private void playPauseClicked() {
+    public void playPauseClicked() {
         if (mediaPlayer.isPlaying()) {
             btnStopAndResume.setImageResource(R.drawable.iconplay);
             mediaPlayer.pause();
@@ -140,11 +156,11 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
         prevThread.start();
     }
 
-    private void prevBtnClicked() {
-        if (isShuffle && !isRepeat){
-            position = getRandomPosition(listLocalSongs.size() - 1);
+    public void prevBtnClicked() {
+        if (isShuffle && !isRepeat) {
+            position = getRandomPosition(localSongsArrayList.size() - 1);
         } else if (!isShuffle && !isRepeat) {
-            position = ((position - 1) < 0 ? (listLocalSongs.size() - 1) : (position - 1));
+            position = ((position - 1) < 0 ? (localSongsArrayList.size() - 1) : (position - 1));
         }
         prepareSong();
     }
@@ -165,11 +181,11 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
         nextThread.start();
     }
 
-    private void nextBtnClicked() {
-        if (isShuffle && !isRepeat){
-            position = getRandomPosition(listLocalSongs.size() - 1);
+    public void nextBtnClicked() {
+        if (isShuffle && !isRepeat) {
+            position = getRandomPosition(localSongsArrayList.size() - 1);
         } else if (!isShuffle && !isRepeat) {
-            position = ((position + 1) % listLocalSongs.size());
+            position = ((position + 1) % localSongsArrayList.size());
         }
         prepareSong();
 
@@ -177,7 +193,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
 
     private int getRandomPosition(int i) {
         Random randomPosition = new Random();
-        return randomPosition.nextInt(i+1);
+        return randomPosition.nextInt(i + 1);
     }
 
     private void eventClick() {
@@ -228,7 +244,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
                 if (isShuffle == false) {
                     isShuffle = true;
                     btnShuffleSong.setImageResource(R.drawable.iconshuffled);
-                    if (isRepeat == true){
+                    if (isRepeat == true) {
                         isRepeat = false;
                         btnPlayRepeat.setImageResource(R.drawable.iconrepeat);
                     }
@@ -245,7 +261,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
                 if (isRepeat == false) {
                     isRepeat = true;
                     btnPlayRepeat.setImageResource(R.drawable.iconrepeated);
-                    if (isShuffle == true){
+                    if (isShuffle == true) {
                         isShuffle = false;
                         btnShuffleSong.setImageResource(R.drawable.iconshuffle);
                     }
@@ -263,6 +279,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
             if (intent.hasExtra("localsong")) {
                 position = intent.getIntExtra("localsong", -1);
 //                Log.d("PMTAN", "GetDataFromIntent: " + localSong.getTittle());
+                localSongsArrayList = localSongsList;
             }
 
             if (intent.hasExtra("localsongrandom")) {
@@ -270,6 +287,7 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
                 isShuffle = true;
                 btnShuffleSong.setImageResource(R.drawable.iconrepeated);
 //                Log.d("PMTAN", "GetDataFromIntent: " + localSong.getTittle());
+                localSongsArrayList = localSongsList;
             }
         }
     }
@@ -301,59 +319,38 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
     }
 
     private void prepareSong() {
-        if (listLocalSongs != null) {
+        if (localSongsArrayList != null) {
             btnStopAndResume.setImageResource(R.drawable.iconpause);
-            uri = Uri.parse(listLocalSongs.get(position).getPath());
+            uri = Uri.parse(localSongsArrayList.get(position).getPath());
         }
-//        if (mediaPlayer.isPlaying() && mediaPlayer!= null){
-//            mediaPlayer.stop();
-//            mediaPlayer.release();
-//            mediaPlayer = new MediaPlayer();
-//        }
-
-        try {
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayer.stop();
-                    mediaPlayer.reset();
-                }
-            });
-            mediaPlayer.setDataSource(String.valueOf(uri));
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
+//
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.start();
+        } else {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.start();
         }
-        mediaPlayer.start();
-
-//        if (mediaPlayer != null) {
-//            mediaPlayer.stop();
-//            mediaPlayer.release();
-//            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-//            mediaPlayer.start();
-//        } else {
-//            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-//            mediaPlayer.start();
-//        }
         seekBar.setMax(mediaPlayer.getDuration() / 1000);
         seekBar.setProgress(0);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
         totalTime.setText(simpleDateFormat.format(mediaPlayer.getDuration()));
-        songName.setText(listLocalSongs.get(position).getTittle());
-        singerName.setText(listLocalSongs.get(position).getArtist());
+        songName.setText(localSongsArrayList.get(position).getTittle());
+        singerName.setText(localSongsArrayList.get(position).getArtist());
 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (viewPagerPlayListSongsAdapter.getItem(0) != null) {
-                    if (listLocalSongs.size() > 0) {
-                        if (listLocalSongs.get(position).getLyric() != null) {
-                            fragment_loi_bai_hat.GetFirstLyric(listLocalSongs.get(position).getLyric());
+                    if (localSongsArrayList.size() > 0) {
+                        if (localSongsArrayList.get(position).getLyric() != null) {
+                            fragment_loi_bai_hat.GetFirstLyric(localSongsArrayList.get(position).getLyric());
                         }
-                        if (listLocalSongs.get(position).getPath() != null) {
-                            fragment_dianhac.getSongBitmap(listLocalSongs.get(position).getPath());
-                        } else if (listLocalSongs.get(position).getPath() == null) {
+                        if (localSongsArrayList.get(position).getPath() != null) {
+                            fragment_dianhac.getSongBitmap(localSongsArrayList.get(position).getPath());
+                        } else if (localSongsArrayList.get(position).getPath() == null) {
                             CircleImageView circleImageView;
                             circleImageView = findViewById(R.id.circleimagedianhac);
                             circleImageView.setBackgroundResource(R.drawable.demo_music);
@@ -371,5 +368,17 @@ public class PlayLocalActivity extends AppCompatActivity implements MediaPlayer.
     @Override
     public void onCompletion(MediaPlayer mp) {
         nextBtnClicked();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        MusicPlayingService.MyBinder myBinder = (MusicPlayingService.MyBinder) service;
+        musicPlayingService = myBinder.getService();
+        Toast.makeText(musicPlayingService, "connected service" + musicPlayingService, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        musicPlayingService = null;
     }
 }

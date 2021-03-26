@@ -23,7 +23,7 @@ import java.util.Random;
 import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
 
 
-public class Fragment_Song_Local extends Fragment {
+public class Fragment_Local_Song extends Fragment {
     View view;
     private Button btnPlayAll;
     private RecyclerView recyclerView;

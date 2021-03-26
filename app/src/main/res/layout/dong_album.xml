@@ -5,8 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
+    android:layout_margin="10dp"
     app:cardCornerRadius="10dp">
     <LinearLayout
         android:id="@+id/linearcardviewalbum"
@@ -31,20 +30,21 @@
             android:maxWidth="200dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:layout_width="wrap_content"
+            android:background="#DDDDDD"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
             android:id="@+id/tv_singer_album_name"
             android:text="Ca sỹ album"
             android:textColor="#9e9797"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:maxWidth="200dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
     </LinearLayout>
