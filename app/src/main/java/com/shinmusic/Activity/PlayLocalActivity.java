@@ -1,12 +1,8 @@
 package com.shinmusic.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +14,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.shinmusic.Adapter.ViewPagerPlayListSongsAdapter;
 import com.shinmusic.Fragment.Fragment_Dianhac;
 import com.shinmusic.Fragment.Fragment_Loi_Bai_Hat;
@@ -27,7 +26,6 @@ import com.shinmusic.R;
 import com.shinmusic.Service.MusicPlayingService;
 import com.shinmusic.Utils.PlaySongListener;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,7 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.shinmusic.Fragment.Fragment_Ca_Nhan.localSongsList;
 
 public class PlayLocalActivity extends AppCompatActivity
-        implements MediaPlayer.OnCompletionListener, PlaySongListener, ServiceConnection {
+            implements PlaySongListener, ServiceConnection {
     private ImageView btnReturn;
     private TextView songName;
     private TextView singerName;
@@ -55,7 +53,7 @@ public class PlayLocalActivity extends AppCompatActivity
     private Fragment_Dianhac fragment_dianhac;
     private Fragment_Play_Local_List_Song fragment_play_local_list_song;
     private Fragment_Loi_Bai_Hat fragment_loi_bai_hat;
-    private MediaPlayer mediaPlayer;
+    //private MediaPlayer mediaPlayer;
     public static ArrayList<LocalSongs> localSongsArrayList = new ArrayList<>();
     private ViewPagerPlayListSongsAdapter viewPagerPlayListSongsAdapter;
     private Uri uri;
@@ -74,7 +72,7 @@ public class PlayLocalActivity extends AppCompatActivity
         setContentView(R.layout.activity_play_nhac2);
         initView();
         getDataFromIntent();
-        prepareSong();
+        setMedia();
         eventClick();
     }
 
@@ -111,32 +109,34 @@ public class PlayLocalActivity extends AppCompatActivity
     }
 
     public void playPauseClicked() {
-        if (mediaPlayer.isPlaying()) {
+        if (musicPlayingService.isPlaying()) {
             btnStopAndResume.setImageResource(R.drawable.iconplay);
-            mediaPlayer.pause();
-            seekBar.setMax(mediaPlayer.getDuration() / 1000);
+            musicPlayingService.pause();
+            seekBar.setMax(musicPlayingService.getDuration() / 1000);
             if (fragment_dianhac.objectAnimator != null) {
                 fragment_dianhac.objectAnimator.pause();
             }
-            runOnUiThread(new Runnable() {
+            PlayLocalActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null) {
-                        int mCurrentTime = mediaPlayer.getCurrentPosition() / 1000;
+                    if (musicPlayingService != null) {
+                        int mCurrentTime = musicPlayingService.getCurrentPosition() / 1000;
                         seekBar.setProgress(mCurrentTime);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-                        currentTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
+                        currentTime.setText(simpleDateFormat.format(musicPlayingService.getCurrentPosition()));
                     }
                     handler.postDelayed(this, 300);
                 }
             });
+            musicPlayingService.OnCompleted();
         } else {
             btnStopAndResume.setImageResource(R.drawable.iconpause);
-            mediaPlayer.start();
-            seekBar.setMax(mediaPlayer.getDuration() / 1000);
+            musicPlayingService.start();
+            seekBar.setMax(musicPlayingService.getDuration() / 1000);
             if (fragment_dianhac.objectAnimator != null) {
                 fragment_dianhac.objectAnimator.resume();
             }
+            musicPlayingService.OnCompleted();
         }
     }
 
@@ -157,12 +157,17 @@ public class PlayLocalActivity extends AppCompatActivity
     }
 
     public void prevBtnClicked() {
+        musicPlayingService.stop();
+        musicPlayingService.release();
         if (isShuffle && !isRepeat) {
             position = getRandomPosition(localSongsArrayList.size() - 1);
         } else if (!isShuffle && !isRepeat) {
             position = ((position - 1) < 0 ? (localSongsArrayList.size() - 1) : (position - 1));
         }
+        uri = Uri.parse(localSongsArrayList.get(position).getPath());
+        musicPlayingService.createMediaPlayer(position);
         prepareSong();
+        musicPlayingService.start();
     }
 
     private void nextThreadBtn() {
@@ -182,13 +187,17 @@ public class PlayLocalActivity extends AppCompatActivity
     }
 
     public void nextBtnClicked() {
+        musicPlayingService.stop();
+        musicPlayingService.release();
         if (isShuffle && !isRepeat) {
             position = getRandomPosition(localSongsArrayList.size() - 1);
         } else if (!isShuffle && !isRepeat) {
             position = ((position + 1) % localSongsArrayList.size());
         }
+        uri = Uri.parse(localSongsArrayList.get(position).getPath());
+        musicPlayingService.createMediaPlayer(position);
         prepareSong();
-
+        musicPlayingService.start();
     }
 
     private int getRandomPosition(int i) {
@@ -200,8 +209,8 @@ public class PlayLocalActivity extends AppCompatActivity
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mediaPlayer != null && fromUser) {
-                    mediaPlayer.seekTo(progress * 1000);
+                if (musicPlayingService != null && fromUser) {
+                    musicPlayingService.seekTo(progress * 1000);
                 }
             }
 
@@ -216,14 +225,14 @@ public class PlayLocalActivity extends AppCompatActivity
             }
         });
 
-        runOnUiThread(new Runnable() {
+        PlayLocalActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mediaPlayer != null) {
-                    int mCurrentTime = mediaPlayer.getCurrentPosition() / 1000;
+                if (musicPlayingService != null) {
+                    int mCurrentTime = musicPlayingService.getCurrentPosition() / 1000;
                     seekBar.setProgress(mCurrentTime);
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-                    currentTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
+                    currentTime.setText(simpleDateFormat.format(musicPlayingService.getCurrentPosition()));
                 }
                 handler.postDelayed(this, 300);
             }
@@ -233,8 +242,8 @@ public class PlayLocalActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 finish();
-                mediaPlayer.stop();
-                mediaPlayer.release();
+                musicPlayingService.stop();
+                musicPlayingService.release();
             }
         });
 
@@ -318,25 +327,28 @@ public class PlayLocalActivity extends AppCompatActivity
         viewPagerPlay.setCurrentItem(1);
     }
 
-    private void prepareSong() {
+    private void setMedia() {
         if (localSongsArrayList != null) {
-            btnStopAndResume.setImageResource(R.drawable.iconpause);
             uri = Uri.parse(localSongsArrayList.get(position).getPath());
         }
-//
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-            mediaPlayer.start();
-        } else {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-            mediaPlayer.start();
-        }
-        seekBar.setMax(mediaPlayer.getDuration() / 1000);
+
+        Intent intent = new Intent(this, MusicPlayingService.class);
+        intent.putExtra("servicePosition",position);
+        startService(intent);
+//        if (musicPlayingService != null) {
+//            musicPlayingService.stop();
+//            musicPlayingService.release();
+//        }
+//            musicPlayingService.createMediaPlayer(position);
+//            musicPlayingService.start();
+    }
+
+    private void prepareSong() {
+        btnStopAndResume.setImageResource(R.drawable.iconpause);
+        seekBar.setMax(musicPlayingService.getDuration() / 1000);
         seekBar.setProgress(0);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        totalTime.setText(simpleDateFormat.format(mediaPlayer.getDuration()));
+        totalTime.setText(simpleDateFormat.format(musicPlayingService.getDuration()));
         songName.setText(localSongsArrayList.get(position).getTittle());
         singerName.setText(localSongsArrayList.get(position).getArtist());
 
@@ -362,23 +374,27 @@ public class PlayLocalActivity extends AppCompatActivity
                 }
             }
         }, 50);
-        mediaPlayer.setOnCompletionListener(this);
+        musicPlayingService.OnCompleted();
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        nextBtnClicked();
-    }
+
+//    @Override
+//    public void onCompletion(MediaPlayer mp) {
+//        nextBtnClicked();
+//    }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         MusicPlayingService.MyBinder myBinder = (MusicPlayingService.MyBinder) service;
         musicPlayingService = myBinder.getService();
         Toast.makeText(musicPlayingService, "connected service" + musicPlayingService, Toast.LENGTH_SHORT).show();
+        prepareSong();
+        musicPlayingService.OnCompleted();
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
         musicPlayingService = null;
     }
+
 }
